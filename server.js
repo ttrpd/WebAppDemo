@@ -111,9 +111,9 @@ http.createServer(function(req, res) {
         });
     } else {
         // Serve web page
-        var path = '.'+url.parse(req.url).pathname
-        if(path === './register.html') {
-            fs.readFile(path, function(err, data) {
+        var path = url.parse(req.url).pathname;
+        if('.'+path === './register.html') {
+            fs.readFile('.'+path, function(err, data) {
                 if(err) {
                     res.writeHead(404, {'Content-Type': 'text/html'});
                     return res.end("404 Not Found");
@@ -123,8 +123,8 @@ http.createServer(function(req, res) {
                 return res.end();
             });
         }
-        if(path === './register.css') {
-            fs.readFile('./style/register.css', function(err, data) {
+        if(path.slice(-4) === '.css') {
+            fs.readFile('./style'+path, function(err, data) {
                 if(err) {
                     res.writeHead(404, {'Content-Type': 'text/text'});
                     return res.end("404 Not Found");

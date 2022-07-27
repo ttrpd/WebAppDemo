@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="register.css" type="text/css">
+    <link rel="stylesheet" href="./style/register.css" type="text/css">
 </head>
 <body>
-    <h1>User Registration</h1>
-    <form action="/register.html" method="post">
-        <div>
-            <div>Username:</div>
-            <input type="text" name="username">
+    <div id="user-rgstr">
+        <h1>User Registration</h1>
+        <div id="user-rgstr-desc">Register below to save user details</div>
+    </div>
+    <div id="user-info">
+        <form action="/register.html" method="post">
+        <div class="text-input">
+            <input type="text" name="username" placeholder="Username">
         </div>
-        <div>
-            <div>Email:</div>
-            <input type="text" name="email">
+        <div class="text-input">
+            <input type="text" name="email" placeholder="Email">
         </div>
-        <input type="submit" value="Submit">
+        <input class="btn-input" type="submit" value="Submit">
     </form>
+    </div>
+    
 </body>
 </html> 
