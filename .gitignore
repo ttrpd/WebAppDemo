@@ -1,0 +1,2 @@
+# ignore whatever node modules may be required for the project
+node_modules/
