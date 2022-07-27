@@ -1,9 +1,20 @@
-var http = require('http');
-var fs = require('fs');
-var url = require('url');
-var formidable = require('formidable');
-var mysql = require('mysql');
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+const formidable = require('formidable');
+const mysql = require('mysql');
+const nodemailer = require('nodemailer');
+const readlinesync = require('readline-sync');
 
+// Get email credentials for the confirmation email
+const source_email = readlinesync.question("Please input the address from which to send the confirmation email:\n");
+const source_email_service = readlinesync.question("Please input the email service to be used for the confirmation email (ex: gmail):\n");
+const source_email_password = readlinesync.question(
+    "Please input the email password:",
+    {hideEchoBack: true}
+);
+
+// Initialize database
 var db = mysql.createConnection({
     host: "localhost",
     user: "demo_db_user",
@@ -11,12 +22,10 @@ var db = mysql.createConnection({
     insecureAuth: true
 });
 
-// Initialize database
 db.connect(function(err) {
     if(err) throw err;
-
+    
     // Ensure the database exists
-    console.log("Connected!");
     db.query("CREATE DATABASE IF NOT EXISTS demo_db", function(err) {
         if(err) throw err;
         console.log("database has been created");
@@ -36,6 +45,7 @@ db.connect(function(err) {
         }
     );
 });
+
 
 // Server code
 http.createServer(function(req, res) {
@@ -65,6 +75,28 @@ http.createServer(function(req, res) {
                         return res.end();
                     });
                 } else {// If the insert succeeds
+                    // Send new user a confirmation email
+                    var transport = nodemailer.createTransport({
+                        service: source_email_service,
+                        auth: {
+                            user: source_email,
+                            pass: source_email_password
+                        }
+                    });
+                    var heading = {
+                        from: source_email,
+                        to: email,
+                        subject: 'Sending Email using Node.js',
+                        text: "This email was sent to confirm the creation of \
+                        a new user.\nUsername: "+username+"\nEmail: "+email+"\n"
+                    };
+                    transport.sendMail(heading, function(err){
+                        if(err) {
+                            console.log("There was an error sending the email:\n"+err);
+                        } else {
+                            console.log("confirmation email was sent");
+                        }
+                    });
                     // Display a confirmation page to the user
                     res.writeHead(200, {'content-type': 'text/html'});
                     fs.readFile('./confirmation.html', function(err, data) {
